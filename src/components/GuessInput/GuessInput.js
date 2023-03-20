@@ -1,18 +1,19 @@
 import React from 'react';
 import { WORD_LENGTH } from '../../constants';
 
-function GuessInput() {
+function GuessInput({ guessHandler }) {
   const INIT_GUESS = '';
-  const [guess, setGuess] = React.useState(INIT_GUESS);
+  const [tentativeGuess, setTentativeGuess] = React.useState(INIT_GUESS);
 
-  function handleGuessSubmit(event) {
+  function handleTentativeGuessSubmit(event) {
     event.preventDefault();
-    console.log({ guess });
-    setGuess(INIT_GUESS);
+    console.log({ tentativeGuess });
+    guessHandler(tentativeGuess);
+    setTentativeGuess(INIT_GUESS);
   }
 
   return (
-    <form className="guess-input-wrapper" onSubmit={handleGuessSubmit}>
+    <form className="guess-input-wrapper" onSubmit={handleTentativeGuessSubmit}>
       <label htmlFor="guess-input">
         {`Enter guess (${WORD_LENGTH} letters)`}:
       </label>
@@ -23,8 +24,10 @@ function GuessInput() {
         maxLength={WORD_LENGTH}
         required={true} // pattern alone still allows empty string submissions
         title={`Enter exactly ${WORD_LENGTH} letters.`}
-        value={guess}
-        onChange={(event) => setGuess(event.target.value.toUpperCase())}
+        value={tentativeGuess}
+        onChange={(event) =>
+          setTentativeGuess(event.target.value.toUpperCase())
+        }
       />
     </form>
   );
