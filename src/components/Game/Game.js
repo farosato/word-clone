@@ -5,6 +5,7 @@ import { WORDS } from '../../data';
 import GuessInput from '../GuessInput';
 import GuessResults from '../GuessResults';
 import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
+import { checkGuess } from '../../game-helpers';
 
 // Pick a random word on every pageload.
 const answer = sample(WORDS);
@@ -18,7 +19,7 @@ function Game() {
       alert('Out of guesses. Start a new game!');
       return;
     }
-    setGuesses([...guesses, guess]);
+    setGuesses([...guesses, checkGuess(guess, answer)]);
   }
   return (
     <>
