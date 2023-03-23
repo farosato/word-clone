@@ -1,13 +1,12 @@
 import React from 'react';
 import { WORD_LENGTH } from '../../constants';
 
-function GuessInput({ guessHandler }) {
+function GuessInput({ guessHandler, isDisabled }) {
   const INIT_GUESS = '';
   const [tentativeGuess, setTentativeGuess] = React.useState(INIT_GUESS);
 
   function handleTentativeGuessSubmit(event) {
     event.preventDefault();
-    console.log({ tentativeGuess });
     guessHandler(tentativeGuess);
     setTentativeGuess(INIT_GUESS);
   }
@@ -20,6 +19,7 @@ function GuessInput({ guessHandler }) {
       <input
         id="guess-input"
         type="text"
+        disabled={isDisabled}
         pattern={`^[A-Za-z]{${WORD_LENGTH}}$`} // minLength doesn't work
         maxLength={WORD_LENGTH}
         required={true} // pattern alone still allows empty string submissions
