@@ -1,5 +1,6 @@
 import React from 'react';
 import { WORD_LENGTH } from '../../constants';
+import OnScreenKeyboard from '../OnScreenKeyboard';
 
 function GuessInput({ guessHandler, isDisabled }) {
   const INIT_GUESS = '';
@@ -11,6 +12,20 @@ function GuessInput({ guessHandler, isDisabled }) {
     setTentativeGuess(INIT_GUESS);
   }
 
+  function onKeyPress(key) {
+    switch (key) {
+      case '⏎':
+        return;
+      case '⌫':
+        setTentativeGuess(tentativeGuess.slice(0, -1));
+        return;
+      default:
+        if (tentativeGuess.length >= WORD_LENGTH) return;
+        setTentativeGuess(tentativeGuess + key.toUpperCase());
+        return;
+    }
+  }
+
   return (
     <form className="guess-input-wrapper" onSubmit={handleTentativeGuessSubmit}>
       <label htmlFor="guess-input">
@@ -20,6 +35,7 @@ function GuessInput({ guessHandler, isDisabled }) {
         id="guess-input"
         type="text"
         disabled={isDisabled}
+        autoFocus={true}
         pattern={`^[A-Za-z]{${WORD_LENGTH}}$`} // minLength doesn't work
         maxLength={WORD_LENGTH}
         required={true} // pattern alone still allows empty string submissions
@@ -29,6 +45,7 @@ function GuessInput({ guessHandler, isDisabled }) {
           setTentativeGuess(event.target.value.toUpperCase())
         }
       />
+      <OnScreenKeyboard onKeyPress={onKeyPress} />
     </form>
   );
 }
