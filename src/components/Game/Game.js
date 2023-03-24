@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 
 import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
 import { WORDS } from '../../data';
@@ -7,12 +8,15 @@ import { sample } from '../../utils';
 import GuessInput from '../GuessInput';
 import GuessResults from '../GuessResults';
 
-// Pick a random word on every pageload.
-const answer = sample(WORDS);
-// To make debugging easier, we'll log the solution in the console.
-console.info({ answer });
+function pickAnswer() {
+  const answer = sample(WORDS);
+  // To make debugging easier, we'll log the solution in the console.
+  console.info({ answer });
+  return answer;
+}
 
 function Game() {
+  const [answer, setAnswer] = React.useState(pickAnswer);
   const [guesses, setGuesses] = React.useState([]);
   const [analyzedGuesses, setAnalyzedGuesses] = React.useState([]);
 
@@ -27,6 +31,12 @@ function Game() {
     setAnalyzedGuesses([...analyzedGuesses, checkGuess(guess, answer)]);
   }
 
+  function reset() {
+    setGuesses([]);
+    setAnalyzedGuesses([]);
+    setAnswer(pickAnswer());
+  }
+
   return (
     <>
       <GuessResults analyzedGuesses={analyzedGuesses} />
@@ -36,34 +46,40 @@ function Game() {
           isSolved={isSolved}
           numOfGuesses={guesses.length}
           answer={answer}
+          resetHandler={reset}
         />
       )}
     </>
   );
 }
 
-function GameOverBanner({ isSolved, numOfGuesses, answer }) {
+function GameOverBanner({ isSolved, numOfGuesses, answer, resetHandler }) {
+  let message;
   if (isSolved) {
-    return (
-      <div className="happy banner">
-        <p>
-          <strong>Congratulations!</strong> Got it in{' '}
-          <strong>
-            {numOfGuesses === 1 ? '1 guess' : `${numOfGuesses} guesses`}
-          </strong>
-          .
-        </p>
-      </div>
+    message = (
+      <p>
+        <strong>Congratulations!</strong> Got it in{' '}
+        <strong>
+          {numOfGuesses === 1 ? '1 guess' : `${numOfGuesses} guesses`}
+        </strong>
+        .
+      </p>
     );
   } else {
-    return (
-      <div className="sad banner">
-        <p>
-          Sorry, the correct answer is <strong>{answer}</strong>.
-        </p>
-      </div>
+    message = (
+      <p>
+        Sorry, the correct answer is <strong>{answer}</strong>.
+      </p>
     );
   }
+  return (
+    <div className={clsx('banner', isSolved ? 'happy' : 'sad')}>
+      {message}
+      <button className="reset-button" onClick={resetHandler}>
+        <strong>Play again!</strong>
+      </button>
+    </div>
+  );
 }
 
 export default Game;
